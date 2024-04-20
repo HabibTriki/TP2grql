@@ -1,1 +1,1 @@
-# TpGraphQL
+# GQL with prisma
