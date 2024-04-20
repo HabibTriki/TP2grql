@@ -27,7 +27,11 @@ enum Role {
 const skills: Skill[] = [
     { id: 1, designation: "JavaScript" },
     { id: 2, designation: "TypeScript" },
-    { id: 3, designation: "GraphQL" }
+  { id: 3, designation: "GraphQL" },
+  { id: 4, designation: "HTML" },
+  { id: 5, designation: "CSS" },
+  { id: 6, designation: "React" },
+  { id: 7, designation: "Angular" }
 ];
 
 const users: User[] = [
