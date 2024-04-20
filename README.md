@@ -1,1 +1,1 @@
-# TpGraphQL
+# TPGQL
