@@ -1,0 +1,106 @@
+Query CVsFetch {
+  CVsFetch {
+    id
+    name
+    age
+    job
+    skills {
+      id
+      designation
+    }
+    user {
+      id
+      name
+      email
+      role
+    }
+  }
+}
+
+query CVByID{
+  CVByID(id: 3) {
+    name
+    age
+    job
+    skills {
+      designation
+    }
+    user {
+      name
+      email
+      role
+    }
+  }
+}
+
+Mutation createCV{
+  createCV(input: {
+    name: "Yvonne Mourali",
+    age: "2",
+    job: "Disobedient Dog",
+    skillIds: [1, 4],
+    userId: 1
+  }) {
+    id
+    name
+    age
+    job
+    skills {
+      id
+      designation
+    }
+    user {
+      id
+      name
+      email
+      role
+    }
+  }
+}
+
+Mutation updateCV{
+  updateCV(id: 1, input: {
+    name: "Sandritta Mourali",
+    skillIds: [2, 3],
+    userId: 2
+  }) {
+    id
+    name
+    age
+    job
+    skills {
+      id
+      designation
+    }
+    user {
+      id
+      name
+      email
+      role
+    }
+  }
+}
+
+
+Mutation deleteCV{
+  deleteCV(id: 1)
+}
+
+subscription CVUpdates{
+  CVUpdates {
+    id
+    name
+    age
+    job
+    skills {
+      id
+      designation
+    }
+    user {
+      id
+      name
+      email
+      role
+    }
+  }
+}

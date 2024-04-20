@@ -1,4 +1,4 @@
-interface Cv {
+interface Cv{
     id : number ,
     name : String,
     age : Number,
@@ -35,7 +35,7 @@ const users: User[] = [
     { id: 2, name: "Aymen Koched", email: "Aymen@example.com", role: Role.ADMIN }
 ];
 
-const cvs: Cv[] = [
+const CVs: Cv[] = [
     {
         id: 1,
         name: "Développeur Frontend",
@@ -57,5 +57,5 @@ const cvs: Cv[] = [
 export const db = {
     skills,
     users,
-    cvs
+    CVs
 };

@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 
-export const cv = {
+export const CV= {
     user : ({user}, _ ,{db}) =>{
         return user ;
     }, 
@@ -9,13 +9,13 @@ export const cv = {
     },
 }
 
-export const query = {
-    cvsFetch : (_ , __ , {db})=>{
-        return db.cvs;
+export const Query = {
+    CVsFetch : (_ , __ , {db})=>{
+        return db.CVs;
     },
-    cvId : (_ , {id}, {db})=>{
-        const cvFound =  db.cvs.find(cv => cv.id === id);
-        if(!cvFound) throw new GraphQLError("Cv not found" ,
+    CVByID : ( _ , {id}, {db})=>{
+        const cvfound =  db.CVs.find(Cv => Cv.id === id);
+        if(!cvfound) throw new GraphQLError("CVnot found" ,
         {
             extensions: {
                 http: {
@@ -26,7 +26,7 @@ export const query = {
                 },
             }
         });
-        return cvFound;
+        return cvfound;
     },
     skills : (_,__,{db})=>{
         return db.skills;
@@ -34,8 +34,8 @@ export const query = {
 }
 
 export const skill = {
-    cvs : ({id},_,{db})=>{
-        return db.cvs.find(cv => cv.skills.some(skill => skill.id === id));
+    CVs : ({id},_,{db})=>{
+        return db.CVs.find(CV=> CV.skills.some(skill => skill.id === id));
     },
 }
 

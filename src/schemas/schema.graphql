@@ -3,7 +3,7 @@ enum Role
     ADMIN 
     USER  
 }
-type cv 
+type CV
 {
     id : Int! 
     name : String!
@@ -15,7 +15,7 @@ type cv
 type skill {
     id : Int! 
     designation : String!
-    cvs : [cv!]
+    CVs : [CV!]
 }
 type user 
 {
@@ -23,12 +23,12 @@ type user
     name : String!
     email : String!
     role : Role!
-    cvs : [cv]!
+    CVs : [CV]!
 }
-type query
+type Query
 {
-    cvsFetch : [cv]!
-    cvId : cv! 
+    CVsFetch : [CV]!
+    CVByID : CV! 
     skills : [skill]!
 }
 input CreateCVInput {
@@ -47,13 +47,13 @@ input UpdateCVInput {
   userId: Int
 }
 
-type mutation {
-  cvCreate(input: CreateCVInput!): cv
-  cvUpdate(id: Int!, input: UpdateCVInput!): cv
-  cvDelete(id: Int!): Boolean!
+type Mutation {
+  CreateCV(input: CreateCVInput!): CV
+  UpdateCV(id: Int!, input: UpdateCVInput!): CV
+  DeleteCV(id: Int!): Boolean!
 }
 
 
 type Subscription {
-  CVUpdates : cv!
+  UpdateCVs : CV!
 }

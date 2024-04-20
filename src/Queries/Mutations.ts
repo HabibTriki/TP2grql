@@ -1,9 +1,9 @@
 import { GraphQLError } from "graphql";
 
-export const mutation = {
-    cvCreate : (_,{input} : any,{pubsub , db})=>{
+export const Mutation = {
+    CreateCV: (_,{input} : any,{pubsub , db})=>{
         const {name , age , job , skillsId , userId } = input;
-        const id = db.cvs.length + 1;
+        const id = db.CVs.length + 1;
         const user = db.users.find(user => user.id === userId);
         if(!user) throw new GraphQLError("User not found" , {
             extensions: {
@@ -16,7 +16,7 @@ export const mutation = {
             }
         });
         const skills = db.skills.filter(skill => skillsId.includes(skill.id));
-        const cv = { 
+        const CV= { 
             id,
             name,
             age ,
@@ -24,14 +24,14 @@ export const mutation = {
             skills ,
             user,
         };
-        db.cvs.push(cv);
-        pubsub.publish("CVUpdates" , cv);
-        return cv;
+        db.CVs.push(CV);
+        pubsub.publish("UpdateCVs" , CV);
+        return CV;
     },
-    cvUpdate : ( _ , {id , input} :any, {pubsub , db}) =>{
+    UpdateCV: ( _ , {id , input} :any, {pubsub , db}) =>{
         const {skillIds , userId} = input;
-        const cvIdd = db.cvs.find(cv => cv.id === id);
-        if(cvIdd == -1) throw new GraphQLError("Cv not found" , {
+        const CVByIdd = db.CVs.find(CV=> CV.id === id);
+        if(CVByIdd == -1) throw new GraphQLError("CVnot found" , {
             extensions: {
                 http: {
                     status: 404,
@@ -41,12 +41,12 @@ export const mutation = {
                 },
             }
         });
-        let cv = db.cvs[cvIdd];
+        let CV= db.CVs[CVByIdd];
         let newSkills =[]
         if (skillIds)
         { 
         newSkills = db.skills.filter((skill) => skillIds.includes(skill.id));
-        cv.skills = newSkills;
+        CV.skills = newSkills;
         }
         
         if ( userId)
@@ -66,19 +66,19 @@ export const mutation = {
         });
         }
         else {
-            cv[user] = user ;
+            CV[user] = user ;
         }
         }
         for(let key in input){
             if( key != skillIds && key != userId )
-              cv[key] = input[key];
+              CV[key] = input[key];
         }
-        pubsub.publish("CVUpdates" , cv);
-        return cv ; 
+        pubsub.publish("UpdateCVs" , CV);
+        return CV; 
     },
-    cvDelete : ( _ , {id} : {id : number} , {pubsub , db}) =>{
-        const cvIndex = db.cvs.findIndex(cv => cv.id === id);
-        if(cvIndex == -1) throw new GraphQLError("Cv with ${id} not found" , {
+    DeleteCV: ( _ , {id} : {id : number} , {pubsub , db}) =>{
+        const CVIndex = db.CVs.findIndex(CV=> CV.id === id);
+        if(CVIndex == -1) throw new GraphQLError("CVwith ${id} not found" , {
             extensions: {
                 http: {
                     status: 404,
@@ -88,21 +88,21 @@ export const mutation = {
                 },
             }
         });
-        const deletedCV = db.cvs.splice(cvIndex, 1)[0];
-        db.skills.forEach((cvSkill) => {
-        if (cvSkill.id === id) {
-            const skillIndex = db.skills.findIndex((skill) => skill.id === cvSkill.id);
+        const deletedCV= db.CVs.splice(CVIndex, 1)[0];
+        db.skills.forEach((CVSkill) => {
+        if (CVSkill.id === id) {
+            const skillIndex = db.skills.findIndex((skill) => skill.id === CVSkill.id);
             if (skillIndex !== -1) {
-            db.skills[skillIndex].cvs = db.skills[skillIndex].cvs.filter((cv) => cv.id !== id);
+            db.skills[skillIndex].CVs = db.skills[skillIndex].CVs.filter((CV) => CV.id !== id);
             }
         }
         });
-        db.skills = db.skills.filter((cvSkill) => cvSkill.id !== id);
+        db.skills = db.skills.filter((CVSkill) => CVSkill.id !== id);
         const userIndex = db.users.findIndex((user) => user.id === deletedCV.user.id);
         if (userIndex !== -1) {
-        db.users[userIndex].cvs = db.users[userIndex].cvs.filter((cv) => cv.id !== id);
+        db.users[userIndex].CVs = db.users[userIndex].CVs.filter((CV) => CV.id !== id);
         }
-        pubsub.publish("CVUpdates" , deletedCV);
+        pubsub.publish("UpdateCVs" , deletedCV);
         return true;
     }
 }
