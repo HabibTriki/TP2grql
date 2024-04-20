@@ -1,5 +1,4 @@
 import { GraphQLError } from "graphql";
-//Les CVs
 export const  CV= {
         user: ({user}, _, {db}) => {
             return user;
@@ -9,7 +8,6 @@ export const  CV= {
         },
     }
 
-//Les requêtes:
     export const Query = {
         CVsFetch: (_, __, { db }) => {
             return db.cvs;
@@ -36,7 +34,6 @@ export const  CV= {
         },
     }
 
-//Les Skills:
     export const  Skill= {
     
         cvs: ({ id } , _, { db }) => {
@@ -48,7 +45,6 @@ export const  CV= {
         },
     }
     
-//Fonction de recherche:  
     export function include (array ,attribut = "",value){
         return array.some((element) => element[attribut] == value );
     }
