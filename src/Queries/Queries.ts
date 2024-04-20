@@ -1,42 +1,55 @@
 import { GraphQLError } from "graphql";
+//Les CVs
+export const  CV= {
+        user: ({user}, _, {db}) => {
+            return user;
+        },
+        skills: ({skills}, __, { db }) => {
+            return skills;
+        },
+    }
 
-export const CV= {
-    user : ({user}, _ ,{db}) =>{
-        return user ;
-    }, 
-    skills : ({skills},_,{db})=>{
-        return skills;
-    },
-}
-
-export const Query = {
-    CVsFetch : (_ , __ , {db})=>{
-        return db.CVs;
-    },
-    CVByID : ( _ , {id}, {db})=>{
-        const cvfound =  db.CVs.find(Cv => Cv.id === id);
-        if(!cvfound) throw new GraphQLError("CVnot found" ,
-        {
-            extensions: {
-                http: {
-                    status: 404,
-                    headers: {
-                    "x-custom-header": "some-value",
+//Les requêtes:
+    export const Query = {
+        CVsFetch: (_, __, { db }) => {
+            return db.cvs;
+        },
+        CVByID: (_, { id }, { db }) => {
+          
+            const foundCV = db.cvs.find((cv) => cv.id === id);
+            if (!foundCV) throw new GraphQLError("CV not found 404 error",
+            {
+                extensions: {
+                    http: {
+                        status: 404,
+                        headers: {
+                        "x-custom-header": "some-value",
+                        },
                     },
-                },
-            }
-        });
-        return cvfound;
-    },
-    skills : (_,__,{db})=>{
-        return db.skills;
-    },
-}
+                }
+            });
+            return foundCV;
+        },
+    
+        SkillsFetch: (_, __, { db }) => {
+            return db.skills;
+        },
+    }
 
-export const skill = {
-    CVs : ({id},_,{db})=>{
-        return db.CVs.find(CV=> CV.skills.some(skill => skill.id === id));
-    },
-}
-
-
+//Les Skills:
+    export const  Skill= {
+    
+        cvs: ({ id } , _, { db }) => {
+    
+            const cvfound = db.cvs.filter((cv)=>{
+                return include(cv.skills,"id",id);
+            } )
+            return cvfound;
+        },
+    }
+    
+//Fonction de recherche:  
+    export function include (array ,attribut = "",value){
+        return array.some((element) => element[attribut] == value );
+    }
+    

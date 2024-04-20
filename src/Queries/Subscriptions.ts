@@ -1,7 +1,7 @@
-export const Subscription = {
+ export const Subscription = {
    
-    UpdateCVs: {
-        subscribe: (_parent, _args, { pubSub }) => pubSub.subscribe("UpdateCVs"),
+    CVUpdates: {
+        subscribe: (_parent, _args, { pubSub }) => pubSub.subscribe("CVUpdates"),
         resolve: (payload) => { return payload; },
     },
 }

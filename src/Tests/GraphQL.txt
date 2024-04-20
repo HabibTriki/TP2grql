@@ -1,4 +1,4 @@
-Query CVsFetch {
+query CVsFetch {
   CVsFetch {
     id
     name
@@ -33,11 +33,11 @@ query CVByID{
   }
 }
 
-Mutation createCV{
+mutation createCV{
   createCV(input: {
-    name: "Yvonne Mourali",
+    name: "test test",
     age: "2",
-    job: "Disobedient Dog",
+    job: "Student",
     skillIds: [1, 4],
     userId: 1
   }) {
@@ -58,9 +58,9 @@ Mutation createCV{
   }
 }
 
-Mutation updateCV{
+mutation updateCV{
   updateCV(id: 1, input: {
-    name: "Sandritta Mourali",
+    name: "test update,
     skillIds: [2, 3],
     userId: 2
   }) {
@@ -82,7 +82,7 @@ Mutation updateCV{
 }
 
 
-Mutation deleteCV{
+mutation deleteCV{
   deleteCV(id: 1)
 }
 
