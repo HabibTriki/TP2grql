@@ -1,18 +1,41 @@
 // 1
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
- 
+
 // 2
 generator client {
   provider = "prisma-client-js"
 }
  
 // 3
-model Link {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  description String
-  url         String
+model CV {
+  id       Int      @id @default(autoincrement())
+  name     String
+  age      String
+  job      String
+  userId   Int     
+  user     User     @relation(fields: [userId], references: [id]) 
+  skills   Skill[]  @relation("CVSkills")
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String  @unique
+  role  Role @default(USER)
+  cvs   CV[]   
+}
+
+
+model Skill {
+  id          Int    @id @default(autoincrement())
+  designation String
+  cvs         CV[]   @relation("CVSkills") 
+}
+
+enum Role{
+  ADMIN
+  USER
 }
