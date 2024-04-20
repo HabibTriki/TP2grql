@@ -89,7 +89,6 @@ export const Mutation = {
 
     }
 
-//The Publish Subscribe part:
     pubSub.publish('CVUpdates', cv );
     return cv;
   },
@@ -112,7 +111,6 @@ export const Mutation = {
     }
     const deletedCV = db.cvs.splice(index, 1)[0];
 
-    // Remove the CV from skills
     db.skills.forEach((cvSkill) => {
       if (cvSkill.id === id) {
         const skillIndex = db.skills.findIndex((skill) => skill.id === cvSkill.id);
@@ -123,13 +121,11 @@ export const Mutation = {
     });
     db.skills = db.skills.filter((cvSkill) => cvSkill.id !== id);
 
-    // Remove the CV from user
     const userIndex = db.users.findIndex((user) => user.id === deletedCV.user.id);
     if (userIndex !== -1) {
       db.users[userIndex].cvs = db.users[userIndex].cvs.filter((cv) => cv.id !== id);
     }
 
-    //The Publish Subscribe part:
     pubSub.publish('CVUpdates', deletedCV);
     return true;
   }
