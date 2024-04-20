@@ -37,10 +37,10 @@ const skills: Skill[] = [
 
 const users: User[] = [
     { id: 1, name: "Habib Triki", email: "Habib@example.com", role: Role.USER },
-    { id: 1, name: "Ala achach", email: "Ala@example.com", role: Role.USER },
-    { id: 2, name: "Aymen Koched", email: "Aymen@example.com", role: Role.ADMIN },
-    { id: 3, name: "Omar", email: "Omar@example.com", role: Role.USER },
-    { id: 4, name: "Samer", email: "Samer@example.com", role: Role.USER }
+    { id: 2, name: "Ala achach", email: "Ala@example.com", role: Role.USER },
+    { id: 3, name: "Aymen Koched", email: "Aymen@example.com", role: Role.ADMIN },
+    { id: 4, name: "Omar", email: "Omar@example.com", role: Role.USER },
+    { id: 5, name: "Samer", email: "Samer@example.com", role: Role.USER }
 ];
 
 const cvs: CV[] = [
