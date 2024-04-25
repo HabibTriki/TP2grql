@@ -96,36 +96,7 @@ export const Mutation = {
 
   deleteCV: (_, { id }: { id: number }, { db, pubSub }) => {
     const index = db.cvs.findIndex((cv) => cv.id === id);
-    if (index === -1) {
-      throw new GraphQLError(`CV with ID ${id} not found 404 error`,
-      {
-        extensions: {
-            http: {
-                status: 404,
-                headers: {
-                "x-custom-header": "some-value",
-                },
-            },
-        }
-    });
-    }
     const deletedCV = db.cvs.splice(index, 1)[0];
-
-    db.skills.forEach((cvSkill) => {
-      if (cvSkill.id === id) {
-        const skillIndex = db.skills.findIndex((skill) => skill.id === cvSkill.id);
-        if (skillIndex !== -1) {
-          db.skills[skillIndex].cvs = db.skills[skillIndex].cvs.filter((cv) => cv.id !== id);
-        }
-      }
-    });
-    db.skills = db.skills.filter((cvSkill) => cvSkill.id !== id);
-
-    const userIndex = db.users.findIndex((user) => user.id === deletedCV.user.id);
-    if (userIndex !== -1) {
-      db.users[userIndex].cvs = db.users[userIndex].cvs.filter((cv) => cv.id !== id);
-    }
-
     pubSub.publish('CVUpdates', deletedCV);
     return true;
   }

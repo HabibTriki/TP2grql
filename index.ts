@@ -7,7 +7,7 @@ type PubSubChannels = {
   CVUpdates
 }
 const pubSub = createPubSub<PubSubChannels>()
-const yoga = createYoga({ schema , context : { db} })
+const yoga = createYoga({ schema , context : { db , pubSub} })
 const server = createServer(yoga)
 server.listen(4000, () => {
   console.info('TP GraphQL http://localhost:4000/graphql')
