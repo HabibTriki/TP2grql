@@ -1,133 +1,86 @@
 import { GraphQLError } from "graphql";
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
+
 export const Mutation = {
 
-  createCV: (_, { input }:any, { pubSub, db }) => {
-    const { name, age, job, skillIds, userId } = input;
-    const id = db.cvs.length + 1;
-    const skills = db.skills.filter((skill) => skillIds.includes(skill.id));
-    console.log(skills);
-    const user = db.users.find((user) => user.id === userId);
-    if (!user) {
-      throw new GraphQLError (`user d'id ${userId} n'existe pas`
-      ,
-      {
-        extensions: {
-            http: {
-                status: 404,
-                headers: {
-                "x-custom-header": "some-value",
-                },
-            },
-        }
+  createCV: async (_, { input }, { pubSub }) => {
+    const newCV = await prisma.cV.create({
+      data: {
+        name: input.name,
+        age: input.age,
+        job: input.job,
+        userId: input.userId,
+        skills: {
+          connect: input.skillIds.map(id => ({ id })),
+        },
+      },
     });
-      
-    
-    }
-
-    const newCV = {
-      id,
-      name,
-      age,
-      job,
-      skills,
-      user,
-    };
-    db.cvs.push(newCV);
-
     pubSub.publish('CVUpdates', newCV);
     return newCV;
   },
-
-  updateCV: (_, { id, input }:any, { pubSub, db }) => {
-    const {  skillIds, userId } = input;
-    const cvIndex = db.cvs.findIndex((cv) => cv.id === id);
-    if (cvIndex === -1) {
-      throw new GraphQLError(` cv d'id ${id} n'existe pas.`,
-      {
-        extensions: {
-            http: {
-                status: 404,
-                headers: {
-                "x-custom-header": "some-value",
-                },
-            },
-        }
+  
+  updateCV: async (_, { id, input }, { pubSub }) => {
+    const cv = await prisma.cV.findUnique({
+      where: { id },
     });
-    }
-    let cv = db.cvs[cvIndex];
-    let newSkills =[]
-    if ( skillIds )
-    { 
-      newSkills = db.skills.filter((skill) => skillIds.includes(skill.id));
-      cv.skills = newSkills;
-    }
-      
-    if ( userId)
-      {
-        const user = db.users.find((user) => user.id === userId);
-      if (!user) {
-      throw new GraphQLError(`user d'id ${userId} n'existe pas.`,
-      {
+  
+    if (!cv) {
+      throw new GraphQLError(`CV with ID ${id} not found`, {
         extensions: {
-            http: {
-                status: 404,
-                headers: {
-                "x-custom-header": "some-value",
-                },
+          http: {
+            status: 404,
+            headers: {
+              "x-custom-header": "some-value",
             },
-        }
+          },
+        },
+      });
+    }
+    const updatedCV = await prisma.cV.update({
+      where: { id },
+      data: {
+        ...input,
+        user: {
+          connect: { id: input.userId },
+        },
+        skills: {
+          set: [],
+          connect: input.skillIds?.map(skillId => ({ id: skillId })),
+        },
+      },
+      include: {
+        user: true,
+        skills: true,
+      },
     });
-      }
-      else {
-        cv[user] = user ;
-      }
-    }
-
-    for(let key in input){
-      if( key != skillIds && key != userId )
-        cv[key] = input[key];
-
-    }
-
-    pubSub.publish('CVUpdates', cv );
-    return cv;
+    pubSub.publish('CVUpdates', updatedCV);
+  
+    return updatedCV;
   },
-
-
-  deleteCV: (_, { id }: { id: number }, { db, pubSub }) => {
-    const index = db.cvs.findIndex((cv) => cv.id === id);
-    if (index === -1) {
-      throw new GraphQLError(`CV with ID ${id} not found 404 error`,
-      {
+  
+  deleteCV: async (_, { id }, { pubSub }) => {
+    const cv = await prisma.cV.findUnique({
+      where: { id },
+    });
+  
+    if (!cv) {
+      throw new GraphQLError(`CV with ID ${id} not found`, {
         extensions: {
-            http: {
-                status: 404,
-                headers: {
-                "x-custom-header": "some-value",
-                },
+          http: {
+            status: 404,
+            headers: {
+              "x-custom-header": "some-value",
             },
-        }
-    });
+          },
+        },
+      });
     }
-    const deletedCV = db.cvs.splice(index, 1)[0];
-
-    db.skills.forEach((cvSkill) => {
-      if (cvSkill.id === id) {
-        const skillIndex = db.skills.findIndex((skill) => skill.id === cvSkill.id);
-        if (skillIndex !== -1) {
-          db.skills[skillIndex].cvs = db.skills[skillIndex].cvs.filter((cv) => cv.id !== id);
-        }
-      }
+    const deletedCV = await prisma.cV.delete({
+      where: { id },
     });
-    db.skills = db.skills.filter((cvSkill) => cvSkill.id !== id);
-
-    const userIndex = db.users.findIndex((user) => user.id === deletedCV.user.id);
-    if (userIndex !== -1) {
-      db.users[userIndex].cvs = db.users[userIndex].cvs.filter((cv) => cv.id !== id);
-    }
-
     pubSub.publish('CVUpdates', deletedCV);
-    return true;
+    return deletedCV;
   }
 }
 
